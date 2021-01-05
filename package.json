@@ -1,6 +1,6 @@
 {
   "name": "react-router-authenticator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Biblioteca para autenticação e controle de rotas",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
