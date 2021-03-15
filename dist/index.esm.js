@@ -1,4 +1,4 @@
-import React, { memo, useContext, createContext } from 'react';
+import React, { memo, createContext } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
 function _defineProperty(obj, key, value) {
@@ -1241,7 +1241,8 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 var invariant_1 = invariant;
 
-var Context = /*#__PURE__*/createContext(false);
+var AuthenticatorContext = /*#__PURE__*/createContext(false);
+AuthenticatorContext.displayName = 'AuthenticatorContext';
 /**
  * Contexto do autenticador
  */
@@ -1251,7 +1252,7 @@ var Authenticator = /*#__PURE__*/memo(function (_ref) {
       onValidator = _ref.onValidator,
       validRedirect = _ref.validRedirect,
       invalidRedirect = _ref.invalidRedirect;
-  return /*#__PURE__*/React.createElement(Context.Provider, {
+  return /*#__PURE__*/React.createElement(AuthenticatorContext.Provider, {
     value: {
       onValidator: onValidator,
       validRedirect: validRedirect,
@@ -1260,30 +1261,41 @@ var Authenticator = /*#__PURE__*/memo(function (_ref) {
   }, children);
 });
 Authenticator.propTypes = {
+  /**
+   * Função validadora que determina se as rotas serão ou não acessadas
+   */
   onValidator: propTypes.func.isRequired,
+
+  /**
+   * Rota de redirecionamento em caso de retorno "true" no atributo "onValidator"
+   */
   validRedirect: propTypes.string.isRequired,
+
+  /**
+   * Rota de redirecionamento em caso de retorno "false" no atributo "onValidator"
+   */
   invalidRedirect: propTypes.string.isRequired
 };
 /**
  * Componente espelho de "Route", com novos métodos complementares
  */
 
-var AuthRoute = /*#__PURE__*/memo(function (_ref2) {
+var AuthRoute = function AuthRoute(_ref2) {
   var children = _ref2.children,
       isPrivate = _ref2.isPrivate,
       restricted = _ref2.restricted,
       component = _ref2.component,
       _render = _ref2.render,
-      rest = _objectWithoutProperties(_ref2, ["children", "isPrivate", "restricted", "component", "render"]);
+      as = _ref2.as,
+      rest = _objectWithoutProperties(_ref2, ["children", "isPrivate", "restricted", "component", "render", "as"]);
 
-  var _useContext = useContext(Context),
-      onValidator = _useContext.onValidator,
-      validRedirect = _useContext.validRedirect,
-      invalidRedirect = _useContext.invalidRedirect;
-
-  return /*#__PURE__*/React.createElement(Context.Consumer, null, function (context) {
+  return /*#__PURE__*/React.createElement(AuthenticatorContext.Consumer, null, function (context) {
     invariant_1(context, 'You should not use <AuthRoute> outside a <Authenticator>');
-    return /*#__PURE__*/React.createElement(Route, _extends({}, rest, {
+    var onValidator = context.onValidator,
+        validRedirect = context.validRedirect,
+        invalidRedirect = context.invalidRedirect;
+    var Component = as || Route;
+    return /*#__PURE__*/React.createElement(Component, _extends({}, rest, {
       render: function render() {
         if (isPrivate) {
           if (!onValidator()) {
@@ -1308,10 +1320,19 @@ var AuthRoute = /*#__PURE__*/memo(function (_ref2) {
       }
     }));
   });
-});
+};
+
 AuthRoute.propTypes = _objectSpread2({
+  /**
+   * Determina se é uma rota privada
+   */
   isPrivate: propTypes.bool,
-  restricted: propTypes.bool
+
+  /**
+   * Determina se uma rota pública se torna restrita após o uso de um callback definido na propriedade 'onValidator' do componente 'Authenticator'
+   */
+  restricted: propTypes.bool,
+  as: propTypes.elementType
 }, Route.propTypes);
 AuthRoute.defaultProps = _objectSpread2({
   isPrivate: false,

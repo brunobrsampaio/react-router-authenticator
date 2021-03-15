@@ -87,3 +87,4 @@ Este componente espelha todas as propriedades do componente `Route` da bibliotec
 | ------ | ------ | ------ | ------ |
 | isPrivate | **Boolean** | Valor booleano que determina se é uma rota privada | **Falso** | 
 | restricted | **Boolean** | Valor booleano que determina se uma rota pública se torna restrita após o uso de um callback definido na propriedade `onValidator` do componente `Authenticator` | **Falso** |
+| as | **Element** | Este atributo é exclusivo para trabalhar em conjunto com o componente `MapRoute` da biblioteca [React Router Mapping](https://www.npmjs.com/package/react-router-mapping) | **Vázio** |
